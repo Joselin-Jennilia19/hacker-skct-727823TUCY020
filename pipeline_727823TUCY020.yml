@@ -1,0 +1,40 @@
+project_name: OSINTEmailHarvester_727823TUCY020
+student_name: Joselin Jennilia
+roll_number: "727823TUCY020"
+description: >
+  Three-stage pipeline that sets up the lab, runs OSINT email
+  harvesting on target domains, and produces a final summary report.
+
+stages:
+  - id: stage1
+    name: Lab Setup
+    script: code/setup_lab.py
+    description: Install dependencies and create target domain files
+    outputs:
+      - test_samples/targets.txt
+      - test_samples/synthetic_emails.txt
+
+  - id: stage2
+    name: Tool Execution
+    script: code/run_tool.py
+    depends_on: stage1
+    description: Run email harvester on all target domains
+    outputs:
+      - outputs/reports/all_results.json
+      - outputs/reports/summary.csv
+      - outputs/logs/run_tool.log
+
+  - id: stage3
+    name: Result Analysis
+    script: code/analyze_results.py
+    depends_on: stage2
+    description: Load results and print final summary table
+    outputs:
+      - outputs/reports/summary.csv
+
+environment:
+  python_version: "3.13"
+  os: "Kali Linux (VirtualBox VM)"
+  dependencies:
+    - requests
+    - beautifulsoup4
